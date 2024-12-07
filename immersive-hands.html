@@ -433,10 +433,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       } else if (Distance(indexFingerBoxes.input_right, interactionBox) < interactionDistance) {
         rightInteractionBox.visible = true;	
       }
-      if ((Distance(indexFingerBoxes.input_left, interactionBox) < interactionDistance) || (Distance(indexFingerBoxes.input_right, interactionBox) < interactionDistance)) {
+      if ((Distance(indexFingerBoxes.input_left, interactionBox) < interactionDistance) && (Distance(indexFingerBoxes.input_right, interactionBox) < interactionDistance)) {
         leftInteractionBox.visible = false;
         rightInteractionBox.visible = false;
-        bothInteractionBox.visible = true;
+        bothInteractionBox.visible = false;
       }
       interactionBox.visible = !(leftInteractionBox.visible || rightInteractionBox.visible || bothInteractionBox.visible);
       
