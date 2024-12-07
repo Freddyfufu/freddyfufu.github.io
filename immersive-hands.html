@@ -429,15 +429,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       leftInteractionBox.visible = false;	
       rightInteractionBox.visible = false;	
       bothInteractionBox.visible = false;
-      if (Distance(indexFingerBoxes.input_left, interactionBox) < interactionDistance) {
-        leftInteractionBox.visible = true;	
-      } else if (Distance(indexFingerBoxes.input_right, interactionBox) < interactionDistance) {
-        rightInteractionBox.visible = true;	
-      }
       if ((Distance(indexFingerBoxes.input_left, interactionBox) < interactionDistance) && (Distance(indexFingerBoxes.input_right, interactionBox) < interactionDistance)) {
         leftInteractionBox.visible = false;
         rightInteractionBox.visible = false;
         bothInteractionBox.visible = true;
+      }
+      else if (Distance(indexFingerBoxes.input_left, interactionBox) < interactionDistance) {
+        leftInteractionBox.visible = true;
+      } else if (Distance(indexFingerBoxes.input_right, interactionBox) < interactionDistance) {
+        rightInteractionBox.visible = true;
       }
       interactionBox.visible = !(leftInteractionBox.visible || rightInteractionBox.visible || bothInteractionBox.visible);
       
