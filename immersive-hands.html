@@ -87,9 +87,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     const defaultBoxColor = {r: 0.5, g: 0.5, b: 0.5};
     const leftBoxColor = {r: 1, g: 0, b: 1};
     const rightBoxColor = {r: 0, g: 1, b: 1};
+    const bothBoxColor = {r: 1, g: 1, b: 0};
     let interactionBox = null;
     let leftInteractionBox = null;
     let rightInteractionBox = null;
+    let bothInteractionBox = null;
 
     // WebGL scene globals.
     let gl = null;
@@ -408,9 +410,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         interactionBox = AddInteractionBox(defaultBoxColor.r, defaultBoxColor.g, defaultBoxColor.b);	
         leftInteractionBox = AddInteractionBox(leftBoxColor.r, leftBoxColor.g, leftBoxColor.b);	
         rightInteractionBox = AddInteractionBox(rightBoxColor.r, rightBoxColor.g, rightBoxColor.b);	
-        scene.addNode(interactionBox);	
+        bothInteractionBox = AddInteractionBox(bothBoxColor.r, bothBoxColor.g, bothBoxColor.b);
+        scene.addNode(interactionBox);
         scene.addNode(leftInteractionBox);	
         scene.addNode(rightInteractionBox);	
+        scene.addNode(bothInteractionBox);
       }
       
       function Distance(nodeA, nodeB) {	
@@ -428,8 +432,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         leftInteractionBox.visible = true;	
       } else if (Distance(indexFingerBoxes.input_right, interactionBox) < interactionDistance) {
         rightInteractionBox.visible = true;	
-      }	
-      interactionBox.visible = !(leftInteractionBox.visible || rightInteractionBox.visible);
+      }
+      if ((Distance(indexFingerBoxes.input_left, interactionBox) < interactionDistance) || (Distance(indexFingerBoxes.input_right, interactionBox) < interactionDistance)) {
+        leftInteractionBox.visible = false;
+        rightInteractionBox.visible = false;
+        bothInteractionBox.visible = true;
+      }
+      interactionBox.visible = !(leftInteractionBox.visible || rightInteractionBox.visible || bothInteractionBox.visible);
       
       mat4.rotateX(interactionBox.matrix, interactionBox.matrix, time/1000);
       mat4.rotateY(interactionBox.matrix, interactionBox.matrix, time/1500);
