@@ -428,6 +428,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       const interactionDistance = interactionBox.scale[0];	
       leftInteractionBox.visible = false;	
       rightInteractionBox.visible = false;	
+      bothInteractionBox.visible = false;
       if (Distance(indexFingerBoxes.input_left, interactionBox) < interactionDistance) {
         leftInteractionBox.visible = true;	
       } else if (Distance(indexFingerBoxes.input_right, interactionBox) < interactionDistance) {
