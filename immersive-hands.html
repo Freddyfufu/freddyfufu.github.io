@@ -65,6 +65,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     // This library matches XRInputSource profiles to available controller models for us.
     import { fetchProfile } from 'https://cdn.jsdelivr.net/npm/@webxr-input-profiles/motion-controllers@1.0/dist/motion-controllers.module.js';
 
+
     // The path of the CDN the sample will fetch controller models from.
     const DEFAULT_PROFILES_PATH = 'https://cdn.jsdelivr.net/npm/@webxr-input-profiles/assets@1.0/dist/profiles';
 
@@ -97,7 +98,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let gl = null;
     let renderer = null;
     let scene = new Scene();
-    scene.addNode(new Gltf2Node({ url: './media/gltf/space/space.gltf' }));
+    scene.addNode(new Gltf2Node({ url: './media/gltf/space/space.gltf' }));;
+
     scene.addNode(new SkyboxNode({ url: './media/textures/milky-way-4k.png' }));
     
     function createBoxPrimitive(r, g, b) {	
@@ -196,6 +198,27 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       // This informs the 'Enter XR' button that the session has started and
       // that it should display 'Exit XR' instead.
       xrButton.setSession(session);
+
+
+      // const loader = new GLTFLoader()
+      // loader.load(
+      //         "models/truhe.glb",
+      //         (gltf) => {
+      //           // GLB-Modell erfolgreich geladen
+      //           const model = gltf.scene;
+      //           model.scale.set(0.5, 0.5, 0.5); // Modell skalieren, falls nötig
+      //           scene.add(model); // Modell zur Szene hinzufügen
+      //         },
+      //         (xhr) => {
+      //           // Fortschrittsanzeige (optional)
+      //           console.log((xhr.loaded / xhr.total) * 100 + '% geladen');
+      //         },
+      //         (error) => {
+      //           // Fehlerbehandlung
+      //           console.error('Fehler beim Laden der FBX-Datei:', error);
+      //         }
+      // )
+
 
       // Listen for the sessions 'end' event so we can respond if the user
       // or UA ends the session for any reason.
