@@ -55,8 +55,16 @@
   // Add canvas to the page
   document.body.appendChild(renderer.domElement);
 
+
+  const supported = await navigator.xr.isSessionSupported('immersive-vr');
+  if (supported) {
+    document.body.appendChild(VRButton.createButton(renderer));
+
+  } else {
+    // 'immersive-vr' sessions are not supported.
+  }
   // Add a button to enter/exit vr to the page
-  document.body.appendChild(VRButton.createButton(renderer));
+
 
   // For AR instead, import ARButton at the top
   //    import { ARButton } from 'https://unpkg.com/three/examples/jsm/webxr/ARButton.js';
