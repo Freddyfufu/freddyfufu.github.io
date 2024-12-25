@@ -102,7 +102,7 @@ const createDefaultView = (options)=> {
 };
 
 
-const createXRIcon = (cssPrefix, height)=>{
+const createXRIconcreateXRIcon = (cssPrefix, height)=>{
   const el = document.createElement('div');
   el.innerHTML = generateXRIconString(cssPrefix, height);
   return el.firstChild;
