@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@webxr-input-profiles/motion-controllers": "^1.0.0",
     "three": "^0.171.0"
   },
   "devDependencies": {
