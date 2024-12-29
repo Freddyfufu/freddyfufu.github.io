@@ -19,11 +19,17 @@
   import * as THREE from 'https://unpkg.com/three/build/three.module.js';
   // Import the default VRButton
   import { VRButton } from 'https://unpkg.com/three/examples/jsm/webxr/VRButton.js';
-  import {Gltf2Node} from "./js/render/nodes/gltf2";
+  import { GLTFLoader } from 'https://unpkg.com/three/examples/jsm/loaders/GLTFLoader.js';
+
+  import {Gltf2Node} from "./js/render/nodes/gltf2.js";
 
   // Make a new scene
   let scene = new THREE.Scene();
-  scene.addNode(new Gltf2Node({ url: './media/gltf/my/spacestation.glb' }));
+  const gltfLoader = new GLTFLoader();
+
+  gltfLoader.load('./media/gltf/my/spacestation.glb', (gltf) => {
+    scene.add(gltf.scene);
+  });
 
   // Set background color of the scene to gray
   scene.background = new THREE.Color(0x505050);
