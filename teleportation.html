@@ -254,85 +254,88 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       //    center box: reset orientation
       //    right box: turn right by 30 degrees
       function onSelect(ev) {
-        let session = ev.frame.session;
-        let refSpace = getRefSpace(session, true);
-
-        let headPose = ev.frame.getPose(xrViewerSpaces[session.mode], refSpace);
-        if (!headPose) return;
-
-        // Get the position offset in world space from the tracking space origin
-        // to the player's feet. The headPose position is the head position in world space.
-        // Subtract the tracking space origin position in world space to get a relative world space vector.
-        vec3.set(playerInWorldSpaceOld, headPose.transform.position.x, 0, headPose.transform.position.z);
-        vec3.sub(
-          playerOffsetInWorldSpaceOld,
-          playerInWorldSpaceOld,
-          trackingSpaceOriginInWorldSpace);
-
-        // based on https://github.com/immersive-web/webxr/blob/master/input-explainer.md#targeting-ray-pose
-        let inputSourcePose = ev.frame.getPose(ev.inputSource.targetRaySpace, refSpace);
-        if (!inputSourcePose) {
-          return;
-        }
-
-        vec3.copy(playerInWorldSpaceNew, playerInWorldSpaceOld);
-        let rotationDelta = 0;
-
-        // Hit test results can change teleport position and orientation.
-        let hitResult = scene.hitTest(inputSourcePose.transform);
-        if (hitResult) {
-          // Check to see if the hit result was one of our boxes.
-          for (let i = 0; i < boxes.length; ++i) {
-            let box = boxes[i];
-            if (hitResult.node == box.node) {
-              // Change the box color to something random.
-              let uniforms = box.renderPrimitive.uniforms;
-              uniforms.baseColorFactor.value = [Math.random(), Math.random(), Math.random(), 1.0];
-              if (i == 0) {
-                // turn left
-                rotationDelta = 30;
-              } else if (i == 1) {
-                // reset heading by undoing the current rotation
-                rotationDelta = -trackingSpaceHeadingDegrees;
-              } else if (i == 2) {
-                // turn right
-                rotationDelta = -30;
-              }
-              console.log('rotate by', rotationDelta);
-            }
-          }
-          if (hitResult.node == floorNode) {
-             // New position uses x/z values of the hit test result, keeping y at 0 (floor level)
-             playerInWorldSpaceNew[0] = hitResult.intersection[0];
-             playerInWorldSpaceNew[1] = 0;
-             playerInWorldSpaceNew[2] = hitResult.intersection[2];
-             console.log('teleport to', playerInWorldSpaceNew);
-          }
-        }
-
-        // Get the new world space offset vector from tracking space origin
-        // to the player's feet, for the updated tracking space rotation.
-        // Formally, this is the old world-space player offset transformed
-        // into tracking space using the old originOffset's rotation component,
-        // then transformed back into world space using the inverse of the
-        // new originOffset. This simplifies to a rotation of the old player
-        // offset by (new angle - old angle):
-        //   worldOffsetNew = inv(rot_of(originOffsetNew)) * rot_of(originOffsetOld) * worldOffsetOld
-        //       = inv(rotY(-angleNew)) * rotY(-angleOld) * worldOffsetOld
-        //       = rotY(angleNew) * rotY(-angleOld) * worldOffsetOld
-        //       = rotY(angleNew - angleOld) * worldOffsetOld
+        let rotationDeltaQuat = quat.create();
         quat.identity(rotationDeltaQuat);
-        quat.rotateY(rotationDeltaQuat, rotationDeltaQuat, rotationDelta * Math.PI / 180);
-        vec3.transformQuat(playerOffsetInWorldSpaceNew, playerOffsetInWorldSpaceOld, rotationDeltaQuat);
-        trackingSpaceHeadingDegrees += rotationDelta;
-
-        // Update tracking space origin so that origin + playerOffset == player location in world space
-        vec3.sub(
-          trackingSpaceOriginInWorldSpace,
-          playerInWorldSpaceNew,
-          playerOffsetInWorldSpaceNew);
-
-        updateOriginOffset(session);
+        quat.rotateY(rotationDeltaQuat, rotationDeltaQuat, 30 * Math.PI / 180);
+        // let session = ev.frame.session;
+        // let refSpace = getRefSpace(session, true);
+        //
+        // let headPose = ev.frame.getPose(xrViewerSpaces[session.mode], refSpace);
+        // if (!headPose) return;
+        //
+        // // Get the position offset in world space from the tracking space origin
+        // // to the player's feet. The headPose position is the head position in world space.
+        // // Subtract the tracking space origin position in world space to get a relative world space vector.
+        // vec3.set(playerInWorldSpaceOld, headPose.transform.position.x, 0, headPose.transform.position.z);
+        // vec3.sub(
+        //   playerOffsetInWorldSpaceOld,
+        //   playerInWorldSpaceOld,
+        //   trackingSpaceOriginInWorldSpace);
+        //
+        // // based on https://github.com/immersive-web/webxr/blob/master/input-explainer.md#targeting-ray-pose
+        // let inputSourcePose = ev.frame.getPose(ev.inputSource.targetRaySpace, refSpace);
+        // if (!inputSourcePose) {
+        //   return;
+        // }
+        //
+        // vec3.copy(playerInWorldSpaceNew, playerInWorldSpaceOld);
+        // let rotationDelta = 0;
+        //
+        // // Hit test results can change teleport position and orientation.
+        // let hitResult = scene.hitTest(inputSourcePose.transform);
+        // if (hitResult) {
+        //   // Check to see if the hit result was one of our boxes.
+        //   for (let i = 0; i < boxes.length; ++i) {
+        //     let box = boxes[i];
+        //     if (hitResult.node == box.node) {
+        //       // Change the box color to something random.
+        //       let uniforms = box.renderPrimitive.uniforms;
+        //       uniforms.baseColorFactor.value = [Math.random(), Math.random(), Math.random(), 1.0];
+        //       if (i == 0) {
+        //         // turn left
+        //         rotationDelta = 30;
+        //       } else if (i == 1) {
+        //         // reset heading by undoing the current rotation
+        //         rotationDelta = -trackingSpaceHeadingDegrees;
+        //       } else if (i == 2) {
+        //         // turn right
+        //         rotationDelta = -30;
+        //       }
+        //       console.log('rotate by', rotationDelta);
+        //     }
+        //   }
+        //   if (hitResult.node == floorNode) {
+        //      // New position uses x/z values of the hit test result, keeping y at 0 (floor level)
+        //      playerInWorldSpaceNew[0] = hitResult.intersection[0];
+        //      playerInWorldSpaceNew[1] = 0;
+        //      playerInWorldSpaceNew[2] = hitResult.intersection[2];
+        //      console.log('teleport to', playerInWorldSpaceNew);
+        //   }
+        // }
+        //
+        // // Get the new world space offset vector from tracking space origin
+        // // to the player's feet, for the updated tracking space rotation.
+        // // Formally, this is the old world-space player offset transformed
+        // // into tracking space using the old originOffset's rotation component,
+        // // then transformed back into world space using the inverse of the
+        // // new originOffset. This simplifies to a rotation of the old player
+        // // offset by (new angle - old angle):
+        // //   worldOffsetNew = inv(rot_of(originOffsetNew)) * rot_of(originOffsetOld) * worldOffsetOld
+        // //       = inv(rotY(-angleNew)) * rotY(-angleOld) * worldOffsetOld
+        // //       = rotY(angleNew) * rotY(-angleOld) * worldOffsetOld
+        // //       = rotY(angleNew - angleOld) * worldOffsetOld
+        // quat.identity(rotationDeltaQuat);
+        // quat.rotateY(rotationDeltaQuat, rotationDeltaQuat, rotationDelta * Math.PI / 180);
+        // vec3.transformQuat(playerOffsetInWorldSpaceNew, playerOffsetInWorldSpaceOld, rotationDeltaQuat);
+        // trackingSpaceHeadingDegrees += rotationDelta;
+        //
+        // // Update tracking space origin so that origin + playerOffset == player location in world space
+        // vec3.sub(
+        //   trackingSpaceOriginInWorldSpace,
+        //   playerInWorldSpaceNew,
+        //   playerOffsetInWorldSpaceNew);
+        //
+        // updateOriginOffset(session);
       }
 
       function updateOriginOffset(session) {
