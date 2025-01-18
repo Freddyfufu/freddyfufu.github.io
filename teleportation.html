@@ -257,6 +257,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let rotationDeltaQuat = quat.create();
         quat.identity(rotationDeltaQuat);
         quat.rotateY(rotationDeltaQuat, rotationDeltaQuat, 30 * Math.PI / 180);
+        quat.multiply(invOrientation, invOrientation, rotationDeltaQuat);
+
         // let session = ev.frame.session;
         // let refSpace = getRefSpace(session, true);
         //
